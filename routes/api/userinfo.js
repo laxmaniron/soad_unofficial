@@ -32,7 +32,7 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 1024 * 1024 * 100 },
   fileFilter: fileFilter
-});
+}).single("profilepicparse");
 
 //Load User Model
 const { User, validate } = require("../../models/User");
@@ -45,25 +45,25 @@ router.get("/test", (req, res) => res.json({ msg: "User Info works" }));
 // @route   GET api/userinfo/register
 // @descrip Register User
 // @access  Public
-router.post("/register", upload.single("profilepicparse"), async (req, res) => {
+router.post("/register", upload, async (req, res) => {
   console.log(req.file);
+  console.log(req.body);
 
   const { error } = validate(req.body);
 
   if (error) {
-    return res.status(400).json({ username: error.details[0].message });
+    console.log(error.details[0].message);
+    return res.status(400).send(error.details[0].message);
   }
   let isUser = await User.findOne({ username: req.body.username });
   if (isUser) {
-    errors.username = "Username already exists";
-    return res.status(400).json(errors);
+    // errors.username = "Username already exists";
+    return res.status(400).send("Username already exists");
   }
 
   isUser = await User.findOne({ email: req.body.email });
   if (isUser) {
-    return res
-      .status(400)
-      .json({ email: "An user already registered using above email" });
+    return res.status(400).send("An user already registered using above email");
   }
 
   let user = new User({
@@ -86,7 +86,10 @@ router.post("/register", upload.single("profilepicparse"), async (req, res) => {
       user.password = hash;
       user
         .save()
-        .then(user => res.json(user))
+        .then(user => {
+          const token = user.generateAuthToken();
+          res.header("x-auth-token", token).json(user);
+        })
         .catch(err => console.log(err));
     });
   });
@@ -103,60 +106,62 @@ router.get("/current", auth, async (req, res) => {
 // @route   UPDATE api/userinfo/current
 // @descrip Get Logged in user information
 // @access  Private
-router.put(
-  "/current",
-  upload.single("profilepicparse"),
-  auth,
-  async (req, res) => {
-    const old_user = await User.findById(req.user._id).select("-password");
+router.put("/editprofile", upload, auth, async (req, res) => {
+  console.log(req.file);
+  console.log(req.body);
 
-    const newuser = {};
+  const old_user = await User.findById(req.user._id).select("-password");
 
-    if (req.body.username) {
-      newuser.username = req.body.username;
-    }
+  const newuser = {};
 
-    if (req.body.firstname) {
-      newuser.firstname = req.body.firstname;
-    }
-
-    if (req.body.lastname) {
-      newuser.lastname = req.body.lastname;
-    }
-
-    if (req.body.email) {
-      newuser.email = req.body.email;
-    }
-
-    if (req.body.phoneno) {
-      newuser.phoneno = req.body.phoneno;
-    }
-
-    if (req.body.Address) {
-      newuser.Address = req.body.Address;
-    }
-
-    if (req.body.pincode) {
-      newuser.pincode = req.body.pincode;
-    }
-
-    if (req.file) {
-      newuser.profilepic = req.file.path;
-    }
-
-    User.findById(req.user._id).then(user => {
-      if (user) {
-        //Update
-        User.findOneAndUpdate(
-          { user: req.user._id },
-          { $set: newuser },
-          { new: true }
-        ).then(user => res.json(user));
-      }
-    });
-
-    res.send(user);
+  if (req.body.firstname) {
+    newuser.firstname = req.body.firstname;
   }
-);
+
+  if (req.body.lastname) {
+    newuser.lastname = req.body.lastname;
+  }
+
+  if (req.body.email) {
+    newuser.email = req.body.email;
+  }
+
+  if (req.body.phoneno) {
+    newuser.phoneno = req.body.phoneno;
+  }
+
+  if (req.body.Address) {
+    newuser.Address = req.body.Address;
+  }
+
+  if (req.body.pincode) {
+    newuser.pincode = req.body.pincode;
+  }
+
+  if (req.file) {
+    newuser.profilepic = req.file.path;
+  }
+
+  // console.log(newuser);
+
+  const user = await User.findById(req.user._id);
+  if (user) {
+    //Update
+    console.log("I am in right path");
+    newone = await User.findOneAndUpdate(
+      { _id: req.user._id },
+      { $set: newuser },
+      { new: true }
+    )
+      .then()
+      .catch(err => res.send({ errormessage: err }));
+  } else {
+    res.send({ errormessage: "invalid token" });
+  }
+
+  console.log(`hi   ${newone}`);
+
+  res.send(newone);
+});
 
 module.exports = router;

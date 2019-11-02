@@ -44,14 +44,12 @@ router.post("/login", async (req, res) => {
   });
 });
 
-
-
 module.exports = router;
 
 function validate(req) {
   const schema = Joi.object({
     username: Joi.string()
-      .min(8)
+      .min(4)
       .max(255)
       .required(),
     password: Joi.string()
