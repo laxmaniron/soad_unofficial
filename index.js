@@ -16,6 +16,7 @@ app.use(bodyParser.json());
 
 //file upload static
 app.use(express.static("uploads"));
+app.use(express.static("dressuploads"));
 
 //DB config
 

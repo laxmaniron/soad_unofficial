@@ -25,6 +25,12 @@ const DressSchema = mongoose.Schema({
     minlength: 2,
     maxlength: 255
   },
+  cover_color: {
+    type: Object,
+    required: true,
+    minlength: 1,
+    maxlength: 255
+  },
   brand: {
     type: String,
     required: true,
@@ -32,7 +38,7 @@ const DressSchema = mongoose.Schema({
     maxlength: 255
   },
   discount: {
-    type: NumberDecimal,
+    type: mongoose.Decimal128,
     required: true
   },
   tag: {
@@ -58,8 +64,11 @@ function ValidateDress(Dress) {
     type: Joi.string()
       .min(2)
       .max(255)
-      .required()
-      .email(),
+      .required(),
+    cover_color: Joi.string()
+      .min(1)
+      .max(255)
+      .required(),
     brand: Joi.string()
       .min(1)
       .max(255)
