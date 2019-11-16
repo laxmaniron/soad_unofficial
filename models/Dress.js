@@ -45,6 +45,15 @@ const DressSchema = mongoose.Schema({
     type: String,
     required: true,
     default: "notag"
+  },
+  gender: {
+    type: String,
+    required: true,
+    enum: ["Men", "Women", "Kids"]
+  },
+  next_page_link: {
+    type: String,
+    required: true
   }
 });
 
@@ -74,7 +83,8 @@ function ValidateDress(Dress) {
       .max(255)
       .required(),
     discount: Joi.required(),
-    tag: Joi.string().required()
+    tag: Joi.string().required(),
+    gender: Joi.string().required()
   });
 
   return schema.validate(Dress);

@@ -38,6 +38,8 @@ router.post("/login", async (req, res) => {
     "-password"
   );
 
+  console.log(gotUser._id);
+
   res.send({
     getuser: gotUser,
     token: token
