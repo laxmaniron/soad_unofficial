@@ -177,27 +177,41 @@ router.post("/getdress", async (req, res) => {
 
   console.log(dynamicquery);
 
-  var countQuery = await Dress.find(dynamicquery).countDocuments();
+  let normalquery = { gender: gender };
 
   if (search !== "search") {
-    let brandquery, categoryquery, colorquery;
+    normalquery = {
+      $or: [
+        {
+          gender: gender,
+          brand: { $regex: search, $options: "i" }
+        },
+        {
+          gender: gender,
+          type: { $regex: search, $options: "i" }
+        },
+        {
+          gender: gender,
+          cover_color: { $regex: search, $options: "i" }
+        }
+      ]
+    };
 
-    search = search;
+    var kdf = await Dress.find(normalquery).countDocuments();
 
-    brandquery = await Dress.find({
-      gender: gender,
-      brand: { $regex: search, $options: "i" }
-    });
+    console.log(kdf);
 
-    console.log(brandquery);
+    dynamicquery = {
+      $and: [dynamicquery, normalquery]
+    };
   }
+
+  var countQuery = await Dress.find(dynamicquery).countDocuments();
 
   dresses = await Dress.find(dynamicquery)
     .skip((page - 1) * limit)
     .limit(limit)
     .catch(err => res.send({ errormessage: err }));
-
-  let normalquery = { gender: gender };
 
   let brands = await Dress.find(normalquery)
     .distinct("brand")

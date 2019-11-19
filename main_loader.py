@@ -7,8 +7,8 @@ mydb = myclient["fashion"]
 source = mydb["colormodels"]
 target = mydb["dressmaininfos"]
 
-
-path = "./apparels_maininfo.xlsx"
+# path = "./apparels_maininfo.xlsx"
+path = "./vendoruploads/apparels_maininfo.xlsx"
 
 wb_obj = openpyxl.load_workbook(path)
 
@@ -39,7 +39,7 @@ for x in source.find():
             if m.value not in buffer:
                 buffer.append(m.value)
                 count = count+1
-                print(count)
+                # print(count)
 
                 try:
 
@@ -80,9 +80,9 @@ for x in source.find():
                         inserter["size_n_fit"] = eval(
                             sheet_obj.cell(row=dress, column=7).value)
 
-                    p += 1
+                    # p += 1
 
-                    print(p)
+                    # print(p)
 
                     target.insert_one(inserter)
 
@@ -90,3 +90,5 @@ for x in source.find():
                     print(str(m.value))
 
                 # print(inserter)
+
+print("ok")

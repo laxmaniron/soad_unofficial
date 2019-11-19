@@ -9,6 +9,11 @@ const app = express();
 const userinfo = require("./routes/api/userinfo");
 const auth = require("./routes/api/auth");
 const dresses = require("./routes/api/dresses");
+const vendorportal = require("./routes/api/vendorportal");
+const designerportal = require("./routes/api/designerportal");
+
+const wishlist = require("./routes/api/wishlist");
+const cart = require("./routes/api/cart");
 
 //Body Parser Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -17,6 +22,7 @@ app.use(bodyParser.json());
 //file upload static
 app.use(express.static("uploads"));
 app.use(express.static("dressuploads"));
+// app.use(express.static("vendoruploads"));
 
 //DB config
 
@@ -40,6 +46,12 @@ mongoose
 app.use("/api/userinfo", userinfo);
 app.use("/api/auth", auth);
 app.use("/api/dresses", dresses);
+app.use("/api/vendorportal", vendorportal);
+app.use("/api/cart", cart);
+app.use("/api/wishlist", wishlist);
+app.use("/api/designerportal", designerportal);
+
+//wishlist and cart
 
 const port = process.env.PORT || 5000;
 
