@@ -164,4 +164,24 @@ router.put("/editprofile", upload, auth, async (req, res) => {
   res.send(newone);
 });
 
+router.put("/addAddress", auth, async (req, res) => {
+  console.log(req.body);
+  const old_user = await User.findById(req.body.user._id).select("-password");
+
+  old_user.Address.push(req.body.address);
+  old_user.pincode.push(req.body.pincode);
+
+  // console.log(old_user);
+
+  newone = await User.findOneAndUpdate(
+    { _id: req.body.user._id },
+    { $set: old_user },
+    { new: true }
+  )
+    .then()
+    .catch(err => res.send({ errormessage: err }));
+
+  res.send(newone);
+});
+
 module.exports = router;

@@ -1,13 +1,33 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+// var jwtDecode = require("jwt-decode");
+const jwt = require("jsonwebtoken");
+const auth = require("../../middleware/auth");
+
+const { DesignerUser } = require("../../models/DesignerUser");
+
+const { DesignerLog } = require("../../models/DesignerLog");
+
+// const config = require("../../middleware/config");
 
 const { Dress } = require("../../models/Dress");
 const { ColorModel } = require("../../models/ColorModel");
 const { DressMainInfo } = require("../../models/DressMainInfo");
 
-router.get("/trending", async (req, res) => {
+router.get("/trending", auth, async (req, res) => {
   trendingdresses = await Dress.find({ tag: "trending" });
+
+  console.log(req.user);
+
+  let user = await DesignerUser.findOne({ _id: req.user._id });
+
+  let logdata = new DesignerLog({
+    username: user.username,
+    company: user.company
+  });
+
+  await logdata.save();
 
   let finalresult = [];
 

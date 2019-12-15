@@ -1,4 +1,10 @@
 "use strict";
+const auth = require("../../middleware/auth");
+const Joi = require("@hapi/joi");
+const bcrypt = require("bcryptjs");
+const _ = require("lodash");
+const { VendorUser } = require("../../models/VendorUser");
+
 var fs = require("fs");
 var cmd = require("node-cmd");
 const excelToJson = require("convert-excel-to-json");
@@ -10,6 +16,8 @@ const {
   DressMainInfo,
   ValidateDressMainInfo
 } = require("../../models/DressMainInfo");
+
+const { VendorLog } = require("../../models/VendorLog");
 
 const multer = require("multer");
 
@@ -51,7 +59,44 @@ router.get("/test", (req, res) => res.json({ msg: "User Info works" }));
 router.post(
   "/vendorfileupload",
   upload.array("vendorfiles[]", 3),
-  (req, res) => {
+  async (req, res) => {
+    // console.log(`Hi  ${req.files}`);
+
+    const deletefiles = async () => {
+      try {
+        fs.unlinkSync("./vendoruploads/apparels.xlsx");
+        fs.unlinkSync("./vendoruploads/colormodel.xlsx");
+        fs.unlinkSync("./vendoruploads/apparels_maininfo.xlsx");
+      } catch (err) {
+        console.log("okay");
+      }
+    };
+
+    let user = await VendorUser.findOne({ username: req.body.username });
+    if (!user) {
+      setTimeout(deletefiles, 5000, "funky");
+      return res.status(400).send("Invalid Username ");
+    }
+
+    const validPassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+
+    if (!validPassword) {
+      setTimeout(deletefiles, 5000, "funky");
+      return res.status(400).send("Password Incorrect");
+    }
+    setTimeout(deletefiles, 5000, "funky");
+
+    let logdata = new VendorLog({
+      username: user.username,
+      company: user.company
+    });
+
+    await logdata.save();
+    // return res.send("All Ok");
+
     console.log(`Hi  ${req.files}`);
     const excelData = excelToJson({
       sourceFile: "vendoruploads/apparels.xlsx",

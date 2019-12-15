@@ -43,18 +43,22 @@ const UserSchema = mongoose.Schema({
     minlength: 10,
     maxlength: 10
   },
-  Address: {
-    type: String,
-    required: true,
-    minlength: 8,
-    maxlength: 1024
-  },
-  pincode: {
-    type: String,
-    required: true,
-    minlength: 6,
-    maxlength: 6
-  },
+  Address: [
+    {
+      type: String,
+      required: true,
+      minlength: 8,
+      maxlength: 1024
+    }
+  ],
+  pincode: [
+    {
+      type: String,
+      required: true,
+      minlength: 6,
+      maxlength: 6
+    }
+  ],
   gender: {
     type: String,
     required: true,
@@ -106,14 +110,8 @@ function ValidateUser(User) {
       .min(10)
       .max(10)
       .required(),
-    Address: Joi.string()
-      .min(8)
-      .max(1024)
-      .required(),
-    pincode: Joi.string()
-      .min(6)
-      .max(6)
-      .required(),
+    Address: Joi.any(),
+    pincode: Joi.any(),
     gender: Joi.string().required(),
     role: Joi.string().required(),
     profilepic: Joi.string().required(),

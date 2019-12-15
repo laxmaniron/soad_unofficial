@@ -7,15 +7,29 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
+// let user = await User.findOne({ username: req.body.username });
+//   if (!user) {
+//     return res.status(400).send("Invalid Username ");
+//   }
+
 router.post("/addtowishlist", async (req, res) => {
-  console.log(req.body);
-  let wishlist = new Wishlist({
+  let isInWishlist = await Wishlist.findOne({
     dressId: req.body.dressId,
     userId: req.body.userId
   });
 
-  const worker = await wishlist.save();
-  res.send(worker);
+  if (!isInWishlist) {
+    console.log(req.body);
+    let wishlist = new Wishlist({
+      dressId: req.body.dressId,
+      userId: req.body.userId
+    });
+
+    const worker = await wishlist.save();
+    return res.send(worker);
+  }
+
+  return res.send("Item already in Wishlist");
 });
 
 router.get("/showwishlist", async (req, res) => {
@@ -42,15 +56,24 @@ router.post("/movetocart", async (req, res) => {
 
   const wishlistItems = await Wishlist.findOne({ _id: wishlistid });
 
-  let cart = new Cart({
+  let isInCart = await Cart.findOne({
     dressId: wishlistItems.dressId,
     userId: wishlistItems.userId
   });
 
-  const final_cart = await cart.save();
+  if (!isInCart) {
+    let cart = new Cart({
+      dressId: wishlistItems.dressId,
+      userId: wishlistItems.userId
+    });
 
-  await Wishlist.remove({ _id: wishlistid });
-  res.send(final_cart);
+    const final_cart = await cart.save();
+
+    await Wishlist.remove({ _id: wishlistid });
+    return res.send(final_cart);
+  }
+
+  return res.send("Item already in Cart");
 });
 
 router.post("/deletefromwishlist", async (req, res) => {

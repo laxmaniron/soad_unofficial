@@ -7,14 +7,23 @@ const router = express.Router();
 const mongoose = require("mongoose");
 
 router.post("/addtocart", async (req, res) => {
-  console.log(req.body);
-  let cart = new Cart({
+  let isInCart = await Cart.findOne({
     dressId: req.body.dressId,
     userId: req.body.userId
   });
 
-  const final_cart = await cart.save();
-  res.send(final_cart);
+  if (!isInCart) {
+    console.log(req.body);
+    let cart = new Cart({
+      dressId: req.body.dressId,
+      userId: req.body.userId
+    });
+
+    const final_cart = await cart.save();
+    return res.send(final_cart);
+  }
+
+  return res.send("Item already in Cart");
 });
 
 router.get("/showcart", async (req, res) => {

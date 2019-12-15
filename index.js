@@ -14,6 +14,12 @@ const designerportal = require("./routes/api/designerportal");
 
 const wishlist = require("./routes/api/wishlist");
 const cart = require("./routes/api/cart");
+const orders = require("./routes/api/order");
+const cards = require("./routes/api/paycard");
+const vendorauth = require("./routes/api/vendorauth");
+const designerauth = require("./routes/api/designerauth");
+const destoven = require("./routes/api/service");
+const trending = require("./routes/api/trending");
 
 //Body Parser Middleware
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -50,6 +56,13 @@ app.use("/api/vendorportal", vendorportal);
 app.use("/api/cart", cart);
 app.use("/api/wishlist", wishlist);
 app.use("/api/designerportal", designerportal);
+app.use("/api/orders", orders);
+app.use("/api/cards", cards);
+app.use("/api/vendorauth", vendorauth);
+app.use("/api/designerauth", designerauth);
+app.use("/api/destoven", destoven);
+// const trending = require("./routes/api/trending");
+app.use("/api/trending", trending);
 
 //wishlist and cart
 
