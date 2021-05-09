@@ -7,8 +7,8 @@ mydb = myclient["fashion"]
 source = mydb["colormodels"]
 target = mydb["dressmaininfos"]
 
-# path = "./apparels_maininfo.xlsx"
-path = "./vendoruploads/apparels_maininfo.xlsx"
+path = "./apparels_maininfo.xlsx"
+# path = "./vendoruploads/apparels_maininfo.xlsx"
 
 wb_obj = openpyxl.load_workbook(path)
 

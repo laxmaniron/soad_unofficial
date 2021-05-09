@@ -24,98 +24,98 @@ mongoose
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-const excelData = excelToJson({
-  sourceFile: "apparels.xlsx",
-
-  header: {
-    rows: 1,
-  },
-
-  // Mapping columns to keys
-  columnToKey: {
-    A: "name",
-    B: "price",
-    C: "cover_photo",
-    D: "type",
-    E: "cover_color",
-    F: "brand",
-    G: "discount",
-    H: "tag",
-    I: "gender",
-    J: "next_page_link",
-  },
-});
-
-// console.log(excelData);
-
-Dress.collection.insertMany(excelData.Sheet1, function (err, docs) {
-  if (err) {
-    return console.error(err);
-  } else {
-    console.log("Multiple documents inserted to Collection");
-  }
-});
-
-///////////////////////////////////////////////////////////////////////////////////////////
-
-// const colorData = excelToJson({
-//   sourceFile: "./colormodel.xlsx",
+// const excelData = excelToJson({
+//   sourceFile: "apparels.xlsx",
 
 //   header: {
-//     rows: 1
+//     rows: 1,
 //   },
 
 //   // Mapping columns to keys
 //   columnToKey: {
-//     A: "main_page_link",
-//     B: "page_color_link",
-//     C: "page_color_image_link"
+//     A: "name",
+//     B: "price",
+//     C: "cover_photo",
+//     D: "type",
+//     E: "cover_color",
+//     F: "brand",
+//     G: "discount",
+//     H: "tag",
+//     I: "gender",
+//     J: "next_page_link",
+//   },
+// });
+
+// // console.log(excelData);
+
+// Dress.collection.insertMany(excelData.Sheet1, function (err, docs) {
+//   if (err) {
+//     return console.error(err);
+//   } else {
+//     console.log("Multiple documents inserted to Collection");
 //   }
 // });
 
-// // console.log(colorData.Sheet1);
+///////////////////////////////////////////////////////////////////////////////////////////
 
-// // let k;
+const colorData = excelToJson({
+  sourceFile: "./colormodel.xlsx",
 
-// const finder = async color => {
-//   let k = await Dress.find();
+  header: {
+    rows: 1
+  },
 
-//   // if (!k) {
-//   //   console.log(color.main_page_link);
-//   // }
+  // Mapping columns to keys
+  columnToKey: {
+    A: "main_page_link",
+    B: "page_color_link",
+    C: "page_color_image_link"
+  }
+});
 
-//   // toArray;
+// console.log(colorData.Sheet1);
 
-//   let ll = Object.keys(k);
+// let k;
 
-//   // for (let p = 0; p < ll.length; p++) {
-//   //   console.log(ll[p]);
-//   // }
+const finder = async color => {
+  let k = await Dress.find();
 
-//   // console.log(k["0"].length);
+  // if (!k) {
+  //   console.log(color.main_page_link);
+  // }
 
-//   let count, i;
-//   for (i = 0, count = 0; i < ll.length; i++) {
-//     let buffer = [];
-//     for (let j = 0; j < colorData.Sheet1.length; j++) {
-//       if (k[ll[i]]["next_page_link"] === colorData.Sheet1[j].main_page_link) {
-//         if (!buffer.includes(colorData.Sheet1[j].page_color_link)) {
-//           ColorModel.collection.insertOne({
-//             dressId: k[ll[i]]["_id"],
-//             color_dresspic: colorData.Sheet1[j].page_color_image_link,
-//             page_color_link: colorData.Sheet1[j].page_color_link
-//           });
-//           count += 1;
-//           buffer.push(colorData.Sheet1[j].page_color_link);
-//         }
-//       }
-//     }
-//   }
+  // toArray;
 
-//   console.log(`count ${count}`);
-// };
+  let ll = Object.keys(k);
 
-// finder();
+  // for (let p = 0; p < ll.length; p++) {
+  //   console.log(ll[p]);
+  // }
+
+  // console.log(k["0"].length);
+
+  let count, i;
+  for (i = 0, count = 0; i < ll.length; i++) {
+    let buffer = [];
+    for (let j = 0; j < colorData.Sheet1.length; j++) {
+      if (k[ll[i]]["next_page_link"] === colorData.Sheet1[j].main_page_link) {
+        if (!buffer.includes(colorData.Sheet1[j].page_color_link)) {
+          ColorModel.collection.insertOne({
+            dressId: k[ll[i]]["_id"],
+            color_dresspic: colorData.Sheet1[j].page_color_image_link,
+            page_color_link: colorData.Sheet1[j].page_color_link
+          });
+          count += 1;
+          buffer.push(colorData.Sheet1[j].page_color_link);
+        }
+      }
+    }
+  }
+
+  console.log(`count ${count}`);
+};
+
+finder();
 
 ///////////////////////////////////////////////////////////////////////////////
 
