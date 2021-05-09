@@ -14,7 +14,7 @@ const { Dress, ValidateDress } = require("../../models/Dress");
 const { ColorModel, ValidateColorModel } = require("../../models/ColorModel");
 const {
   DressMainInfo,
-  ValidateDressMainInfo
+  ValidateDressMainInfo,
 } = require("../../models/DressMainInfo");
 
 const { VendorLog } = require("../../models/VendorLog");
@@ -22,12 +22,12 @@ const { VendorLog } = require("../../models/VendorLog");
 const multer = require("multer");
 
 const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
+  destination: function (req, file, cb) {
     cb(null, "vendoruploads/");
   },
-  filename: function(req, file, cb) {
+  filename: function (req, file, cb) {
     cb(null, file.originalname);
-  }
+  },
 });
 
 const fileFilter = (req, file, cb) => {
@@ -48,7 +48,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage: storage,
   limits: { fileSize: 1024 * 1024 * 100 },
-  fileFilter: fileFilter
+  fileFilter: fileFilter,
 });
 
 // @route   GET api/vendorportal/test
@@ -91,7 +91,7 @@ router.post(
 
     let logdata = new VendorLog({
       username: user.username,
-      company: user.company
+      company: user.company,
     });
 
     await logdata.save();
@@ -102,7 +102,7 @@ router.post(
       sourceFile: "vendoruploads/apparels.xlsx",
 
       header: {
-        rows: 1
+        rows: 1,
       },
 
       // Mapping columns to keys
@@ -116,13 +116,13 @@ router.post(
         G: "discount",
         H: "tag",
         I: "gender",
-        J: "next_page_link"
-      }
+        J: "next_page_link",
+      },
     });
 
     console.log(excelData.Sheet1.length);
 
-    Dress.collection.insertMany(excelData.Sheet1, function(err, docs) {
+    Dress.collection.insertMany(excelData.Sheet1, function (err, docs) {
       if (err) {
         return console.error(err);
       } else {
@@ -134,22 +134,22 @@ router.post(
       sourceFile: "vendoruploads/colormodel.xlsx",
 
       header: {
-        rows: 1
+        rows: 1,
       },
 
       // Mapping columns to keys
       columnToKey: {
         A: "main_page_link",
         B: "page_color_link",
-        C: "page_color_image_link"
-      }
+        C: "page_color_image_link",
+      },
     });
 
     console.log(colorData.Sheet1.length);
 
     // let k;
 
-    const finder = async color => {
+    const finder = async (color) => {
       let k = await Dress.find();
 
       let ll = Object.keys(k);
@@ -167,7 +167,7 @@ router.post(
               ColorModel.collection.insertOne({
                 dressId: k[ll[i]]["_id"],
                 color_dresspic: colorData.Sheet1[j].page_color_image_link,
-                page_color_link: colorData.Sheet1[j].page_color_link
+                page_color_link: colorData.Sheet1[j].page_color_link,
               });
               count += 1;
               buffer.push(colorData.Sheet1[j].page_color_link);
@@ -188,7 +188,7 @@ router.post(
 
       var process = spawn("python3", ["./main_loader.py"]);
 
-      process.stdout.on("data", function(data) {
+      process.stdout.on("data", function (data) {
         console.log(data);
         fs.unlinkSync("./vendoruploads/apparels.xlsx");
         fs.unlinkSync("./vendoruploads/colormodel.xlsx");
